@@ -9,6 +9,7 @@
     --font-size: 16px;
     --border: .0625rem solid var(--hover);
     --radius: .5rem;
+    --slot-width: 3.75rem;
 }
 
 html,
@@ -16,6 +17,7 @@ body {
     all: unset;
     flex-direction: column;
     touch-action: manipulation;
+    user-select: none;
     font: 400 var(--font-size) system-ui, Helvetica, Arial, sans-serif;
     color: var(--fg);
     background-color: var(--bg);
@@ -23,46 +25,64 @@ body {
     height: 100%;
 }
 
+body {
+    position: relative;
+    /* -- Keep 16/9 aspect ratio --
+    max-width: calc(1600vh / 9);
+    width: 100%;
+    max-height: calc(900vw / 16);
+    height: 100%;
+    */
+    background-color: #479147;
+}
+
+html,
 body,
 body * {
     display: flex;
     box-sizing: border-box;
 }
 
-/* ----- Inventory ----- */
-.inv {
-    flex-wrap: wrap;
-    font-size: 18px;
-    width: 37.5rem;
-}
-
+html,
+body,
+.inv,
 .inv div {
     justify-content: center;
     align-items: center;
 }
 
-.inv > div {
-    position: relative;
-    background-color: var(--hover);
-    border-radius: var(--radius);
+svg {
+    fill: var(--gray);
     aspect-ratio: 1/1;
-    width: calc(10% - .25rem);
+    height: 1.25rem;
+    margin: .625rem;
+}
+
+.hidden {
+    display: none;
+}
+
+/* ----- Inventory ----- */
+.inv {
+    flex-wrap: wrap;
+    font-size: 18px;
+}
+
+.inv div {
+    position: relative;
+    image-rendering: pixelated;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: var(--transparent);
+    background-size: 75%;
+    border-radius: var(--radius);
+    width: calc(var(--slot-width) - .25rem);
+    height: calc(var(--slot-width) - .25rem);
     margin: .125rem;
 }
 
-/* --- Items --- */
-.inv div div {
-    width: 100%;
-    height: 100%;
-}
-
-.inv img {
-    pointer-events: none;
-    image-rendering: pixelated;
-    width: 75%;
-}
-
-.inv div div::after {
+/* Count */
+.inv div:not([data-count='1'])::after {
     position: absolute;
     content: attr(data-count);
     color: #fff;
@@ -73,6 +93,30 @@ body * {
     right: 0;
 }
 
+/* Drag target */
 .drag {
     opacity: .6;
+}
+
+/* Selected slot */
+.selected {
+    border: .125rem solid var(--rose);
+}
+
+/* --- Columns --- */
+.inv-cols-1 {
+    width: var(--slot-width);
+}
+
+.inv-cols-2 {
+    width: calc(2 * var(--slot-width));
+    height: calc(2 * var(--slot-width));
+}
+
+.inv-cols-3 {
+    width: calc(3 * var(--slot-width));
+}
+
+.inv-cols-10 {
+    width: calc(10 * var(--slot-width));
 }
