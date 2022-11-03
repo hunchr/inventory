@@ -7,10 +7,32 @@
     <link rel="stylesheet" href="main.css">
     <script src="js/items.js" defer></script>
     <script src="js/main.js" defer></script>
-    <!-- <script src="js/keyboard-shortcuts.js" defer></script> -->
+    <script src="js/keyboard-shortcuts.js" defer></script>
     <style></style>
 </head>
 <body>
-    
+    <!-- Player inventory -->
+    <div id="inv" class="inv-hidden">
+        <div id="inv-top">
+            <div id="inv-skin" class="inv inv-cols-2">
+                <div></div>
+            </div>
+            <div class="inv inv-cols-2">
+                <div><svg viewBox="0 0 8 8"><use href="#i-arrow-forward"></use></svg></div>
+                <div><svg viewBox="0 0 8 8"><use href="#i-arrow-forward"></use></svg></div>
+                <div><svg viewBox="0 0 8 8"><use href="#i-arrow-forward"></use></svg></div>
+                <div><svg viewBox="0 0 8 8"><use href="#i-arrow-forward"></use></svg></div>
+            </div>
+            <div class="inv inv-cols-1">
+                <svg viewBox="0 0 8 8"><use href="#i-arrow-forward"></use></svg>
+            </div>
+        </div>
+    </div>
+    <!-- Icons -->
+    <div class="hidden">
+        <svg viewBox="0 0 8 8">
+            <path id="i-arrow-forward" d="M0 3.5h6.09L3.29.71 4 0l4 4-4 4-.7-.7 2.79-2.8H0v-1Z"/>
+        </svg>
+    </div>
 </body>
 </html>

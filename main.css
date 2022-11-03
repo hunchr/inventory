@@ -1,6 +1,4 @@
 :root {
-    --fg: #e1e0e6;    /* 16.00 */
-    --bg: #000;       /*  1.00 */
     --gray: #9b9a9d;  /*  7.50 */
     --hover: #1a1a1c; /*  1.20 */
     --rose: #e80070;
@@ -19,8 +17,8 @@ body {
     touch-action: manipulation;
     user-select: none;
     font: 400 var(--font-size) system-ui, Helvetica, Arial, sans-serif;
-    color: var(--fg);
-    background-color: var(--bg);
+    color: #fff;
+    background-color: #000;
     width: 100%;
     height: 100%;
 }
@@ -52,13 +50,14 @@ body,
 }
 
 svg {
-    fill: var(--gray);
+    fill: #fff;
     aspect-ratio: 1/1;
     height: 1.25rem;
     margin: .625rem;
 }
 
-.hidden {
+.hidden,
+.inv-hidden > :not(:last-child) {
     display: none;
 }
 
@@ -119,4 +118,24 @@ svg {
 
 .inv-cols-10 {
     width: calc(10 * var(--slot-width));
+}
+
+/* --- Player inventory --- */
+#inv {
+    flex-direction: column;
+    position: absolute;
+    bottom: .25rem;
+}
+
+#inv-top {
+    align-items: center;
+}
+
+#inv > :nth-child(2) {
+    margin: .25rem 0;
+}
+
+#inv-skin div {
+    width: calc(100% - .25rem);
+    height: calc(100% - .25rem);
 }

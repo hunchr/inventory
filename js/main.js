@@ -3,36 +3,30 @@ let slotId = 0;
 
 const $ = e => document.querySelector(e),
       body = document.body,
-      inventoryContainer = document.createElement("div"),
 
-setSlotAttributes = (slot, item = "", count = "", draggable = false) => {
+setSlotAttributes = (slot, item = "", count = 1, draggable = false) => {
     slot.dataset.item = item;
     slot.dataset.count = count;
     slot.draggable = draggable;
 };
 
 class Inventory {
-    constructor(parent, columnCount, slots) {
+    constructor(parent, cols, rows) {
+        this.inv = document.createElement("div");
         this.slots = [];
-        const inv = document.createElement("div");
+        rows *= cols;
 
-        inv.classList.add("inv", "inv-cols-" + columnCount);
-        parent.appendChild(inv);
+        this.inv.classList.add("inv", "inv-cols-" + cols);
+        parent.appendChild(this.inv);
 
-        slots.forEach(data => {
+        // Create slots
+        for (let i=0; i<rows; i++) {
             const slot = document.createElement("div");
 
             slot.id = "slot-" + slotId++;
+            setSlotAttributes(slot);
             this.slots.push(slot);
-            inv.appendChild(slot);
-
-            // Add item
-            if (data) {
-                setSlotAttributes(slot, data[0], data[1], true);
-            }
-            else {
-                setSlotAttributes(slot);
-            }
+            this.inv.appendChild(slot);
 
             // ----- Move items by dragging -----
             slot.addEventListener("dragenter", ev => {
@@ -63,22 +57,18 @@ class Inventory {
                     return;
                 }
 
+                // Stack items
                 if (origin.dataset.item === slot.dataset.item) {
-                    // // Stack items
-                    // if (target.dataset.id === origin.dataset.id) {
-                    //     const count = Number(target.dataset.count) + Number(origin.dataset.count),
-                    //           stackSize = items[Number(target.dataset.id)][1];
-
-                    //     if (count > stackSize) {
-                    //         origin.dataset.count = count - stackSize; 
-                    //         return target.dataset.count = stackSize; 
-                    //     }
-                        
-                    //     target.dataset.count = count;
-                    //     return origin.remove();
-                    // }
+                    let total = Number(slot.dataset.count) + Number(origin.dataset.count);
+                    const stackSize = items[slot.dataset.item].stackSize;
                     
-                    return console.log("TODO: stack origin", origin, "onto slot", slot);
+                    if (total > stackSize) {
+                        origin.dataset.count = total - stackSize; 
+                        return slot.dataset.count = stackSize; 
+                    }
+                    
+                    slot.dataset.count = total;
+                    return setSlotAttributes(origin);
                 }
 
                 // --- Swap items ---
@@ -98,7 +88,7 @@ class Inventory {
                     let total = Number(slot.dataset.count);
                     const stackSize = items[slot.dataset.item].stackSize;
                 
-                    for (const item of inv.querySelectorAll(`[data-item="${slot.dataset.item}"]:not(#${slot.id})`)) {
+                    for (const item of this.inv.querySelectorAll(`[data-item="${slot.dataset.item}"]:not(#${slot.id})`)) {
                         const count = Number(item.dataset.count);
                 
                         total += count;
@@ -114,21 +104,55 @@ class Inventory {
                     }
                 }
             });
+        };
+    };
+
+    addItems(items) {
+        items.forEach(item => {
+            setSlotAttributes(this.slots[item[0]], item[1], item[2], true);
         });
     };
 };
 
-inventoryContainer.id = "inv";
+// ----- Create player inventory -----
+const playerInvCont = $("#inv"),
+      playerInvTop = $("#inv-top"),
+      playerSkin = $("#inv-skin"),
 
-const inventory = new Inventory(body, 10, [
-    ["stone", 6],
-    ["wood", 1],
-    null,
-    ["stone", 3],
-    null,
-    ["wood", 10],
-    ["stone", 7],
-    null,
-    null,
-    ["wood", 4]
+hotbar = new Inventory(playerInvCont, 10, 1),
+playerInv = new Inventory(playerInvCont, 10, 3),
+playerArmor = new Inventory(playerInvTop, 2, 2),
+playerCraft = new Inventory(playerInvTop, 2, 2),
+playerCraftOut = new Inventory(playerInvTop, 1, 1);
+
+playerInvCont.appendChild(playerInv.inv);
+playerInvCont.appendChild(hotbar.inv);
+playerInvTop.insertBefore(playerArmor.inv, playerSkin);
+playerInvTop.insertBefore(playerCraft.inv, $("#inv .inv-cols-1"));
+playerInvTop.appendChild(playerCraftOut.inv);
+
+// --- Hotbar: select slot ---
+hotbar.slots.forEach(slot => {
+    slot.addEventListener("click", ev => {
+        hotbar.selectSlot(ev.target);
+    });
+});
+
+hotbar.selectSlot = slot => {
+    hotbar.selectedSlot.classList.remove("selected");
+    hotbar.selectedSlot = slot;
+    slot.classList.add("selected");
+};
+
+hotbar.selectedSlot = hotbar.slots[0];
+hotbar.selectSlot(hotbar.selectedSlot);
+
+// For testing
+hotbar.addItems([
+    [0, "stone", 6],
+    [1, "wood", 1],
+    [3, "stone", 3],
+    [5, "wood", 10],
+    [6, "stone", 7],
+    [8, "wood", 4]
 ]);
