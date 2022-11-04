@@ -8,6 +8,12 @@ setSlotAttributes = (slot, item = "", count = 1, draggable = false) => {
     slot.dataset.item = item;
     slot.dataset.count = count;
     slot.draggable = draggable;
+},
+
+setSlotFilter = (...filters) => {
+    filters.forEach(filter => {
+        filter[0].dataset.allowed = filter[1];
+    });
 };
 
 class Inventory {
@@ -60,7 +66,7 @@ class Inventory {
                 // Stack items
                 if (origin.dataset.item === slot.dataset.item) {
                     let total = Number(slot.dataset.count) + Number(origin.dataset.count);
-                    const stackSize = items[slot.dataset.item].stackSize;
+                    const stackSize = items[slot.dataset.item][1];
                     
                     if (total > stackSize) {
                         origin.dataset.count = total - stackSize; 
@@ -72,21 +78,23 @@ class Inventory {
                 }
 
                 // --- Swap items ---
-                const attributes = [[], []];
+                if (!slot.dataset.allowed || slot.dataset.allowed === items[origin.dataset.item][0]) {
+                    const attributes = [[], []];
 
-                [origin, slot].forEach((e, i) => {
-                    attributes[i].push(e.dataset.item, e.dataset.count, e.draggable);
-                });
+                    [origin, slot].forEach((e, i) => {
+                        attributes[i].push(e.dataset.item, e.dataset.count, e.draggable);
+                    });
 
-                setSlotAttributes(slot, ...attributes[0]);
-                setSlotAttributes(origin, ...attributes[1]);
+                    setSlotAttributes(slot, ...attributes[0]);
+                    setSlotAttributes(origin, ...attributes[1]);
+                }
             });
 
             // --- Stack items by double clicking ---
             slot.addEventListener("dblclick", () => {
                 if (slot.draggable) {
                     let total = Number(slot.dataset.count);
-                    const stackSize = items[slot.dataset.item].stackSize;
+                    const stackSize = items[slot.dataset.item][1];
                 
                     for (const item of this.inv.querySelectorAll(`[data-item="${slot.dataset.item}"]:not(#${slot.id})`)) {
                         const count = Number(item.dataset.count);
@@ -107,7 +115,7 @@ class Inventory {
         };
     };
 
-    addItems(items) {
+    addItem(...items) {
         items.forEach(item => {
             setSlotAttributes(this.slots[item[0]], item[1], item[2], true);
         });
@@ -147,12 +155,22 @@ hotbar.selectSlot = slot => {
 hotbar.selectedSlot = hotbar.slots[0];
 hotbar.selectSlot(hotbar.selectedSlot);
 
-// For testing
-hotbar.addItems([
-    [0, "stone", 6],
-    [1, "wood", 1],
-    [3, "stone", 3],
-    [5, "wood", 10],
-    [6, "stone", 7],
-    [8, "wood", 4]
-]);
+// --- Set rules ---
+setSlotFilter(
+    [playerArmor.slots[0], "helmet"],
+    [playerArmor.slots[1], "chestplate"],
+    [playerArmor.slots[2], "leggings"],
+    [playerArmor.slots[3], "boots"],
+    [playerCraftOut.slots[0], "-"]
+);
+
+//* --- Testing (delete later) ---
+hotbar.addItem(
+    [0, "stone", 32],
+    [1, "stoneLeggings", 1],
+    [3, "stoneAxe", 1],
+    [5, "stone", 48],
+    [6, "stoneHelmet", 1],
+    [7, "stick", 17],
+    [8, "stoneLeggings", 1]
+);
