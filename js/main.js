@@ -167,10 +167,27 @@ setSlotFilter(
 //* --- Testing (delete later) ---
 hotbar.addItem(
     [0, "stone", 32],
-    [1, "stoneLeggings", 1],
-    [3, "stoneAxe", 1],
-    [5, "stone", 48],
-    [6, "stoneHelmet", 1],
+    [1, "stick"],
+    [6, "stone"],
     [7, "stick", 17],
-    [8, "stoneLeggings", 1]
+);
+
+playerInv.addItem(
+    [0, "woodHelmet"],
+    [1, "ironChestplate"],
+    [2, "goldLeggings"],
+    [3, "amethystBoots"],
+    [4, "diamondSword"],
+    [5, "sapphirePickaxe"],
+    [6, "emeraldAxe"],
+    [7, "rubyShovel"],
+    [8, "spinelHoe"],
+    [9, "ironBlock", 48],
+    [10, "goldBlock", 48],
+    [11, "amethystBlock", 48],
+    [12, "diamondBlock", 48],
+    [13, "sapphireBlock", 48],
+    [14, "emeraldBlock", 48],
+    [15, "rubyBlock", 48],
+    [16, "spinelBlock", 48],
 );
